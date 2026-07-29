@@ -15,6 +15,7 @@ app.listen(PORT, () => {
 })
 
 app.post("/chat", async(req, res) => {
+    
     const options = {
         method: "POST",
         headers: {
