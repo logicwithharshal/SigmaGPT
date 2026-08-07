@@ -11,7 +11,7 @@ function Sidebar(){
             const respoce = await fetch("http://localhost:8080/api/thread");
             const res = await respoce.json();
             const filteredData = res.map(thread => ({threadId: thread.threadId, title: thread.title}));
-            console.log(filteredData);
+            // console.log(filteredData);
             setAllThreads(filteredData);
         }catch(err){
             console.log(err);
@@ -20,13 +20,36 @@ function Sidebar(){
 
     useEffect(()=> {
         getAllThreads();
-    }, [])
+    }, [currThreadId])
 
+    const createNewChat = () => {
+        setNewChat(true);
+        setPrompt("");
+        setReply(null);
+        setCurrentThreadId(uuidv1());
+        setPrevChat([]);
+    }
+
+    const changeThread = async(newThreadId) => {
+        setCurrentThreadId(newThreadId);
+
+        try{
+            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
+            const res = await response.json();
+
+            console.log(res);
+            setPrevChats(res);
+            setNewChat(false);
+            setReply(null);
+        }catch(err){
+            console.log(err);
+        }
+    }
 
     return(
         <section className="sidebar">
             {/* new chat button */}
-            <button>
+            <button onClick={createNewChat}>
                 <img src="" alt="gpt logo" className="logo"></img>
                 <span><i className="fa-solid fa-pen-to-square"></i></span>
             </button>
@@ -35,7 +58,9 @@ function Sidebar(){
             <ul className="history">
                 {
                     allThreads?.map((thread, idx) => (
-                        <li key={idx}>{thread.title}</li>
+                        <li key={idx}
+                            onClick={() => changeThread(thread.threadId)}
+                        >{thread.title}</li>
                     ))
                 }
             </ul>

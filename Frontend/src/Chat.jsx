@@ -7,20 +7,25 @@ import "highlight.js/styles/github-dark.css";
 
 
 function Chat() {
-    const {newChat, prevChats} = useContext(MyContext);
-    const {latestReply, setLatesReply} = useState(null);
+    const {newChat, prevChats, reply} = useContext(MyContext);
+    const [latestReply, setLatestReply] = useState(null);
 
     useEffect(()=> {
+        if(reply==null){
+            setLatestReply(null);
+            return;
+        }
+
         if(!prevChats?.length) return;
 
         const content = reply.split("");
 
         let idx = 0;
         const interval = setInterval(()=>{
-            setLatesReply(content.slice(0, idx+1).join(""));
+            setLatestReply(content.slice(0, idx+1).join(""));
 
             idx++;
-            if(idx>= content.length) clearInterval(nterval);
+            if(idx>= content.length) clearInterval(interval);
         }, 40);
 
         return () => clearInterval(interval);
@@ -44,18 +49,27 @@ function Chat() {
                 }
 
                 {
-                    prevChats.length>0 && latestReply != null &&
-                    <div className="gptDiv" key={"typing"} >
-                        <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{latestReply}</ReactMarkdown>
-                    </div>
+                    prevChats.length > 0 && (
+                        <>
+                            {
+                                latestReply === null ? (
+                                    <div className="gptDiv" key="non-typing">
+                                        <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                                            {prevChats[prevChats.length - 1].content}
+                                        </ReactMarkdown>
+                                    </div>
+                                    ) : (
+                                    <div className="gptDiv" key="typing">
+                                        <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                                            {latestReply}
+                                        </ReactMarkdown>
+                                    </div>
+                                )
+                            }
+                        </>
+                    )
                 }
 
-                {/* <div className="userDiv">
-                    <p className="userMessage">User Message</p>
-                </div>
-                <div className="gptDiv">
-                    <p className="gptMessage">GPT Generated Message</p>
-                </div> */}
             </div>
         </>
     )
