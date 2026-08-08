@@ -14,12 +14,12 @@ function App() {
   const [allThreads, setAllThreads] = useState([]);
 
   const providerValue = {
-    prompt, setPrompt,
-    reply, setReply,
-    currThreadId, setCurrThreadId,
-    newChat, setNewChat,
-    prevChats, setPrevChats,
-    allThreads, setAllThreads
+      prompt, setPrompt,
+      reply, setReply,
+      currThreadId, setCurrThreadId,
+      allThreads, setAllThreads,
+      newChat, setNewChat,
+      prevChats, setPrevChats
   };
 
   return (

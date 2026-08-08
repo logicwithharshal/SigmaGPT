@@ -12,6 +12,14 @@ app.listen(PORT, () => {
     console.log(`server running on ${PORT}`);
 })
 
+app.get("/api/thread", (req, res) => {
+    res.json([]);
+})
+
+app.get("/api/thread/:threadId", (req, res) => {
+    res.json([]);
+})
+
 app.post("/chat", async(req, res) => {
     const options = {
         method: "POST",

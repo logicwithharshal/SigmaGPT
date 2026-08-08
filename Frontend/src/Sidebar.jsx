@@ -1,17 +1,22 @@
 import "./Sidebar.css";
 import { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext.jsx";
+import {v1 as uuidv1} from "uuid";
 
 function Sidebar(){
 
-    const {allThreads, setAllThreads, currThreadId} = useContext(MyContext);
+    const {
+        allThreads, setAllThreads, 
+        currThreadId, setCurrThreadId,
+        setNewChat, setPrompt, setReply,
+        setPrevChats
+    } = useContext(MyContext);
 
     const getAllThreads = async() => {
         try{
-            const respoce = await fetch("http://localhost:8080/api/thread");
-            const res = await respoce.json();
+            const response = await fetch("http://localhost:8080/api/thread");
+            const res = await response.json();
             const filteredData = res.map(thread => ({threadId: thread.threadId, title: thread.title}));
-            // console.log(filteredData);
             setAllThreads(filteredData);
         }catch(err){
             console.log(err);
@@ -26,18 +31,15 @@ function Sidebar(){
         setNewChat(true);
         setPrompt("");
         setReply(null);
-        setCurrentThreadId(uuidv1());
-        setPrevChat([]);
+        setCurrThreadId(uuidv1());
+        setPrevChats([]);
     }
 
     const changeThread = async(newThreadId) => {
-        setCurrentThreadId(newThreadId);
-
+        setCurrThreadId(newThreadId);
         try{
             const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
             const res = await response.json();
-
-            console.log(res);
             setPrevChats(res);
             setNewChat(false);
             setReply(null);
@@ -48,13 +50,11 @@ function Sidebar(){
 
     return(
         <section className="sidebar">
-            {/* new chat button */}
             <button onClick={createNewChat}>
                 <img src="" alt="gpt logo" className="logo"></img>
                 <span><i className="fa-solid fa-pen-to-square"></i></span>
             </button>
 
-            {/* histort */}
             <ul className="history">
                 {
                     allThreads?.map((thread, idx) => (
@@ -65,7 +65,6 @@ function Sidebar(){
                 }
             </ul>
 
-            {/* Sign */}
             <div className="sign">
                 <p>By me &hearts;</p>
             </div>
